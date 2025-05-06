@@ -67,7 +67,7 @@ if(!isset($_SESSION['user_id'])) {
                 </div>
                 
             </div>
-            <div class="grid col-span-12 lg:col-span-6 p-3 border-2 border-black">
+            <div class="grid col-span-12 lg:col-span-5 p-3 border-2 border-black">
                 <div>
                     <h3 class="text-xl font-semibold">What's on your thought?</h3>
                     <form id="postForm" class="mt-2">
@@ -88,14 +88,20 @@ if(!isset($_SESSION['user_id'])) {
                             <div class="flex justify-between items-center">
                                 <div class="break-words max-w-full">
                                     <?php 
-                                    $userData = getUserInfoDataById($pdo, $post['posted_by']);
+                                    $posterData = getUserInfoDataById($pdo, $post['posted_by']);
                                     ?>
-                                    <p class="font-semibold">Posted by: <br class="md:hidden"><?php echo $userData['firstname'] . ' ' . $userData['lastname'] ?></p>
+                                    <p class="font-semibold">Posted by: <br class="md:hidden"><?php echo $posterData['firstname'] . ' ' . $posterData['lastname'] ?></p>
                                 </div>
-                                <div class="flex mt-2 sm:mt-0">
-                                    <button class="mx-1 px-4 py-2 md:py-1 border-2 border-black rounded-lg font-semibold hover:bg-cyan-200 cursor-pointer hover:scale-105 transition duration-100 ease-out editPostButton">Edit</button>
-                                    <button class="mx-1 px-4 py-2 md:py-1 border-2 border-black rounded-lg font-semibold hover:bg-cyan-200 cursor-pointer hover:scale-105 transition duration-100 ease-out deletePostbutton">Delete</button>
-                                </div>
+                                <?php
+                                if($_SESSION['user_id'] == $post['posted_by']) {
+                                ?>
+                                    <div class="flex mt-2 sm:mt-0">
+                                        <button class="mx-1 px-4 py-2 md:py-1 border-2 border-black rounded-lg font-semibold hover:bg-cyan-200 cursor-pointer hover:scale-105 transition duration-100 ease-out editPostButton">Edit</button>
+                                        <button class="mx-1 px-4 py-2 md:py-1 border-2 border-black rounded-lg font-semibold hover:bg-cyan-200 cursor-pointer hover:scale-105 transition duration-100 ease-out deletePostbutton">Delete</button>
+                                    </div>
+                                <?php
+                                }
+                                ?>
                             </div>
                             <div class="px-1 py-3 displayOnlyPostContent">
                                 <?php echo $post['content'] ?>
@@ -113,6 +119,16 @@ if(!isset($_SESSION['user_id'])) {
 
                             <div class="py-1 font-semibold commentSection">
                                 COMMENTS
+                                <form id="commentForm" class="flex flex-col lg:flex-row mt-2">
+                                    <textarea id="commentContent" class="w-full px-3 py-2 border-2 border-black font-normal resize-none focus:bg-cyan-100" rows="1"></textarea>
+                                    <input type="submit" id="submitComment" value="Comment!" class="ml-0 lg:ml-5 mt-2 px-3 py-2 lg:py-0 border-2 border-black rounded-lg text-lg font-bold hover:bg-cyan-200 cursor-pointer hover:scale-105 transition duration-100 ease-out">
+                                </form>
+
+                                <div class="p-2 mainCommentSection">
+                                    <div class="border-2 border-black p-2">
+                                        TEST COMMENT
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     <?php
@@ -120,7 +136,7 @@ if(!isset($_SESSION['user_id'])) {
                     ?>
                 </div>
             </div>
-            <div class="grid col-span-12 lg:col-span-3 p-3 border-2 border-black">
+            <div class="grid col-span-12 lg:col-span-4 p-3 border-2 border-black">
                 <h2 class="text-center text-2xl font-semibold">RECENT ACTIVITIES</h2>
             </div>
         </div>
