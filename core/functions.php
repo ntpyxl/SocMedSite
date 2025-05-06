@@ -1,7 +1,7 @@
 <?php 
     require_once "dbConfig.php";
 
-    function registerUser($pdo, $username, $password, $verifyPassword, $firstname, $lastname) {
+    function registerUser($pdo, $username, $password, $firstname, $lastname) {
         $uacQuery = "INSERT INTO user_accounts (username, userpassword) VALUES (?, ?)";
         $uacStatement = $pdo -> prepare($uacQuery);
         $execute_uacQuery = $uacStatement -> execute([$username, $password]);
@@ -35,8 +35,44 @@
         }
     }
 
-    ////////////////////////////////////
-    ////////////////////////////////////
+    function submitPost($pdo, $postedBy, $postContent) {
+        $submitPostQuery = "INSERT INTO posts (posted_by, content) VALUES (?, ?)";
+        $submitPostStatement = $pdo -> prepare($submitPostQuery);
+        $execute_submitPostStatement = $submitPostStatement -> execute([$postedBy, $postContent]);
+
+        if($execute_submitPostStatement) {
+            return "postSubmissionSuccess";
+        } else {
+            return "postSubmissionFailed";
+        }
+    }
+
+    function editPost($pdo, $postId, $postedBy, $editedBy, $newPostContent) {
+        $editPostQuery = "UPDATE posts SET content = ? WHERE post_id = ?";
+        $editPostStatement = $pdo -> prepare($editPostQuery);
+        $execute_editPostStatement = $editPostStatement -> execute([$newPostContent, $postId]);
+
+        if($execute_editPostStatement) {
+            return "postEditingSuccess";
+        } else {
+            return "postEditingFailed";
+        }
+    }
+
+    function getAllPostsByRecency($pdo) {
+        $getPostsQuery = "SELECT * FROM posts ORDER BY time_posted DESC;";
+        $getPostsStatement = $pdo -> prepare($getPostsQuery);
+        $execute_getPostsStatement = $getPostsStatement -> execute();
+
+        if($execute_getPostsStatement) {
+            return $getPostsStatement -> fetchAll();
+        } else {
+            return "failed";
+        }
+    }
+
+////////////////////////////////////////////////
+////////////////////////////////////////////////
 
     function getUserInfoDataById($pdo, $user_id) {
         $query = "SELECT * FROM users WHERE user_id = ?";
@@ -59,6 +95,18 @@
             return $statement -> fetch();
         } else if($executeQuery && $statement -> rowCount() == 0) {
             return "no match";
+        } else {
+            return "failed";
+        }
+    }
+
+    function getPostDataById($pdo, $post_id) {
+        $query = "SELECT * FROM posts WHERE post_id = ?";
+        $statement = $pdo -> prepare($query);
+        $executeQuery = $statement -> execute([$post_id]);
+
+        if($executeQuery) {
+            return $statement -> fetch();
         } else {
             return "failed";
         }

@@ -11,7 +11,7 @@
 
         if(getUserAccDataByUsername($pdo, $username) == "no match") {
             if($_POST['password'] == $_POST['verifyPassword']) {
-                $function = registerUser($pdo, $username, $password, $verifyPassword, $firstname, $lastname);
+                $function = registerUser($pdo, $username, $password, $firstname, $lastname);
                 echo $function;
             } else {
                 echo "passwordNotVerified";
@@ -26,6 +26,25 @@
         $password = $_POST['password'];
 
         $function = loginUser($pdo, $username, $password);
+        echo $function;
+    }
+
+    if(isset($_POST['submitPostRequest'])) {
+        $postedBy = $_SESSION['user_id'];
+        $postContent = $_POST['postContent'];
+
+        $function = submitPost($pdo, $postedBy, $postContent);
+        echo $function;
+    }
+
+    if(isset($_POST['editPostRequest'])) {
+        $postId = $_POST['post_id'];
+        $postedBy = getPostDataById($pdo, $postId)['posted_by'];
+        
+        $editedBy = $_SESSION['user_id'];
+        $newPostContent = $_POST['newPostContent'];
+
+        $function = editPost($pdo, $postId, $postedBy, $editedBy, $newPostContent);
         echo $function;
     }
 ?>

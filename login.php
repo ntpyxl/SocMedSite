@@ -1,4 +1,9 @@
-<?php session_start(); ?>
+<?php
+session_start();
+if(isset($_SESSION['user_id'])) {
+    header("Location: index.php");
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -27,7 +32,7 @@
             </form>
             <div class="p-3">
                 No account yet?
-                <input type="submit" id="goToRegisterPage" value="Register" onclick="window.location.href='register.php'" class="ml-2 px-2 border-2 border-black rounded-lg hover:bg-cyan-200 cursor-pointer hover:scale-105 transition duration-100 ease-out">
+                <button onclick="window.location.href='register.php'" class="ml-2 px-2 border-2 border-black rounded-lg hover:bg-cyan-200 cursor-pointer hover:scale-105 transition duration-100 ease-out">Register</button>
             </div>
         </div>
 
