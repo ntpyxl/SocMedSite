@@ -47,4 +47,11 @@
         $function = editPost($pdo, $postId, $postedBy, $editedBy, $newPostContent);
         echo $function;
     }
+    
+    if(isset($_POST['deletePostRequest'])) {
+        $postId = $_POST['post_id'];
+
+        $function = deletePost($pdo, $postId);
+        echo $function;
+    }
 ?>

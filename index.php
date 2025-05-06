@@ -21,38 +21,47 @@ if(!isset($_SESSION['user_id'])) {
                     <h5 class="text-2xl font-semibold">Hello, <?php echo $_SESSION['user_firstname'] ?>!</h5>
                     <button onclick="window.location.href='core/logout.php';" class="w-24 h-8 mt-2 px-2 border-2 border-black rounded-lg font-semibold hover:bg-cyan-200 cursor-pointer hover:scale-105 transition duration-100 ease-out">LOG OUT</button>
 
-                    <div id="loginSuccessMessage" class="mt-5 p-2 h-max border-2 rounded-lg bg-green-400 hidden">
-                        <h4 class="py-2 text-center text-lg font-bold">Logged In Successfully!</h4>
-                    </div>
-
-                    <div id="postSuccessMessage" class="mt-5 p-2 h-max border-2 rounded-lg bg-green-400 hidden">
-                        <h4 class="py-2 text-center text-lg font-bold">Post Submitted Successfully!</h4>
-                    </div>
-
-                    <div id="postFailedMessage" class="mt-5 p-2 h-max border-2 rounded-lg bg-red-400 hidden">
-                        <h4 class="py-2 text-center text-lg font-bold">Post Submission Failed!</h4>
-                    </div>
-
-                    <div id="editPostSuccessMessage" class="mt-5 p-2 h-max border-2 rounded-lg bg-green-400 hidden">
-                        <h4 class="py-2 text-center text-lg font-bold">Post Edited Successfully!</h4>
-                    </div>
-
-                    <div id="editPostFailedMessage" class="mt-5 p-2 h-max border-2 rounded-lg bg-red-400 hidden">
-                        <h4 class="py-2 text-center text-lg font-bold">Post Editing Failed!</h4>
-                        <p id="failMessage" class="py-2 text-center break-word"></p>
+                    <div id="message" class="mt-5 p-2 h-max border-2 rounded-lg bg-red-400 hidden">
+                        <h4 id="mainMessage" class="py-2 text-center text-lg font-bold">Post Editing Failed!</h4>
+                        <p id="subMessage" class="py-2 text-center break-word hidden"></p>
                     </div>
 
                     <?php 
                     if(isset($_GET['loginSuccess'])) {
-                        echo "<script>$('#loginSuccessMessage').removeClass('hidden');</script>";
+                        echo "<script>
+                            $('#mainMessage').text('Successfully Logged In!');
+                            $('#subMessage').addClass('hidden');
+                            $('#message').addClass('bg-green-400');
+                            $('#message').removeClass('bg-red-400');
+                            $('#message').removeClass('hidden');
+                        </script>";
                     }
-
                     if(isset($_GET['postSubmissionSuccess'])) {
-                        echo "<script>$('#postSuccessMessage').removeClass('hidden');</script>";
+                        echo "<script>
+                            $('#mainMessage').text('Successfully Submitted Post!');
+                            $('#subMessage').addClass('hidden');
+                            $('#message').addClass('bg-green-400');
+                            $('#message').removeClass('bg-red-400');
+                            $('#message').removeClass('hidden');
+                        </script>";
                     }
-
                     if(isset($_GET['postEditSuccess'])) {
-                        echo "<script>$('#editPostSuccessMessage').removeClass('hidden');</script>";
+                        echo "<script>
+                            $('#mainMessage').text('Successfully Edited Post!');
+                            $('#subMessage').addClass('hidden');
+                            $('#message').addClass('bg-green-400');
+                            $('#message').removeClass('bg-red-400');
+                            $('#message').removeClass('hidden');
+                        </script>";
+                    }
+                    if(isset($_GET['postDeleteSuccess'])) {
+                        echo "<script>
+                            $('#mainMessage').text('Successfully Deleted Post!');
+                            $('#subMessage').addClass('hidden');
+                            $('#message').addClass('bg-green-400');
+                            $('#message').removeClass('bg-red-400');
+                            $('#message').removeClass('hidden');
+                        </script>";
                     }
                     ?>
                 </div>

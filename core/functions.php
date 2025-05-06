@@ -59,6 +59,18 @@
         }
     }
 
+    function deletePost($pdo, $postId) {
+        $deletePostQuery = "DELETE FROM posts WHERE post_id = ?";
+        $deletePostStatement = $pdo -> prepare($deletePostQuery);
+        $execute_deletePostStatement = $deletePostStatement -> execute([$postId]);
+
+        if($execute_deletePostStatement) {
+            return "postDeletionSuccess";
+        } else {
+            return "postDeletionFailed";
+        }
+    }
+
     function getAllPostsByRecency($pdo) {
         $getPostsQuery = "SELECT * FROM posts ORDER BY time_posted DESC;";
         $getPostsStatement = $pdo -> prepare($getPostsQuery);

@@ -48,9 +48,9 @@ if(isset($_SESSION['user_id'])) {
             </div>
         </div>
 
-        <div id="registerFailMessage" class="mx-auto p-2 w-max max-w-[75vw] border-2 rounded-lg bg-red-400 hidden">
-            <h4 class="px-8 py-2 text-center text-lg font-bold">Registration Failed!</h4>
-            <p id="failMessage" class="py-2 text-center break-word"></p>
+        <div id="message" class="mx-auto p-2 w-max max-w-[75vw] border-2 rounded-lg bg-red-400 hidden">
+            <h4 id="mainMessage" class="px-8 py-2 text-center text-lg font-bold"></h4>
+            <p id="subMessage" class="py-2 text-center break-word hidden"></p>
         </div>
         
         <script src="core/script.js"></script>

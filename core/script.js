@@ -18,8 +18,12 @@ $('#userRegisterForm').on('submit', function(event){
             if(data.trim() == "registrationSuccess") {
                 window.location.href = "login.php?registerSuccess=1";
             } else {
-                $('#failMessage').text(data.trim());
-                $('#registerFailMessage').removeClass("hidden");
+                $('#mainMessage').text("Failed to Register User!");
+                $('#subMessage').text(data.trim());
+                $('#subMessage').removeClass('hidden');
+                $('#message').addClass('bg-red-400');
+                $('#message').removeClass('bg-green-400');
+                $('#message').removeClass('hidden');
             }
         }
     })
@@ -40,8 +44,12 @@ $('#userLoginForm').on('submit', function(event){
             if(data.trim() == "loginSuccess") {
                 window.location.href = "index.php?loginSuccess=1"
             } else {
-                $('#failMessage').text(data.trim());
-                $('#loginFailMessage').removeClass("hidden");
+                $('#mainMessage').text("Failed to Log In!");
+                $('#subMessage').text(data.trim());
+                $('#subMessage').removeClass('hidden');
+                $('#message').addClass('bg-red-400');
+                $('#message').removeClass('bg-green-400');
+                $('#message').removeClass('hidden');
             }
         }
     })
@@ -60,8 +68,12 @@ $('#postForm').on('submit', function(event){
             if(data.trim() == "postSubmissionSuccess") {
                 window.location.href = "index.php?postSubmissionSuccess=1"
             } else {
-                $('#failMessage').text(data.trim());
-                $('#postFailedMessage').removeClass("hidden");
+                $('#mainMessage').text("Failed to Submit Post!");
+                $('#subMessage').text(data.trim());
+                $('#subMessage').removeClass('hidden');
+                $('#message').addClass('bg-red-400');
+                $('#message').removeClass('bg-green-400');
+                $('#message').removeClass('hidden');
             }
         }
     })
@@ -101,8 +113,12 @@ $('.editPostButton').on('click', function(event) {
                     if(data.trim() == "postEditingSuccess") {
                         window.location.href = "index.php?postEditSuccess=1"
                     } else {
-                        $('#failMessage').text(data.trim());
-                        $('#editPostFailedMessage').removeClass("hidden");
+                        $('#mainMessage').text("Failed to Edit Post!");
+                        $('#subMessage').text(data.trim());
+                        $('#subMessage').removeClass('hidden');
+                        $('#message').addClass('bg-red-400');
+                        $('#message').removeClass('bg-green-400');
+                        $('#message').removeClass('hidden');
                     }
                 }
             })
@@ -114,6 +130,49 @@ $('.editPostButton').on('click', function(event) {
         confirmationSection.addClass("hidden");
         editablePostContent.val(displayOnlyPostContent.text().trim());
         displayOnlyPostContent.removeClass("hidden");
+        commentSection.removeClass("hidden");
+    })
+})
+
+$('.deletePostbutton').on('click', function(event) {
+    const post_id = $(this).closest('.post').find('.post_id');
+    const confirmationSection = $(this).closest('.post').find('.confirmationSection');
+    const confirmMessage = $(this).closest('.post').find('.confirmMessage');
+    const confirmButton = $(this).closest('.post').find('.confirmSec_Y');
+    const cancelButton = $(this).closest('.post').find('.confirmSec_N');
+    const commentSection = $(this).closest('.post').find('.commentSection');
+
+
+    commentSection.addClass("hidden");
+    confirmMessage.text("Are you sure you want to delete this post?");
+    confirmationSection.removeClass("hidden");
+    
+    $(confirmButton).on('click', function(event){
+        const formData = {
+            post_id: parseInt(post_id.text()),
+            deletePostRequest: 1
+        };
+        $.ajax({
+            type: "POST",
+            url: handleFormDirectory,
+            data: formData,
+            success: function(data) {
+                if(data.trim() == "postDeletionSuccess") {
+                    window.location.href = "index.php?postDeleteSuccess=1"
+                } else {
+                    $('#mainMessage').text("Failed to Delete Post!");
+                    $('#subMessage').text(data.trim());
+                    $('#subMessage').removeClass('hidden');
+                    $('#message').addClass('bg-red-400');
+                    $('#message').removeClass('bg-green-400');
+                    $('#message').removeClass('hidden');
+                }
+            }
+        })
+    })
+
+    $(cancelButton).on('click', function(event){
+        confirmationSection.addClass("hidden");
         commentSection.removeClass("hidden");
     })
 })

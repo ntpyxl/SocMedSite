@@ -36,18 +36,20 @@ if(isset($_SESSION['user_id'])) {
             </div>
         </div>
 
-        <div id="registerSuccessMessage" class="mx-auto p-2 w-max max-w-[75vw] border-2 rounded-lg bg-green-400 hidden">
-            <h4 class="px-8 py-2 text-center text-lg font-bold">Registered Successfully!</h4>
-        </div>
-
-        <div id="loginFailMessage" class="mx-auto p-2 w-max max-w-[75vw] border-2 rounded-lg bg-red-400 hidden">
-            <h4 class="px-8 py-2 text-center text-lg font-bold">Login Failed!</h4>
-            <p id="failMessage" class="py-2 text-center break-word"></p>
+        <div id="message" class="mx-auto p-2 w-max max-w-[75vw] border-2 rounded-lg bg-red-400 hidden">
+            <h4 id="mainMessage" class="px-8 py-2 text-center text-lg font-bold"></h4>
+            <p id="subMessage" class="py-2 text-center break-word hidden"></p>
         </div>
 
         <?php 
         if(isset($_GET['registerSuccess'])) {
-            echo "<script>$('#registerSuccessMessage').removeClass('hidden');</script>";
+            echo "<script>
+                $('#mainMessage').text('Account Registered Successfully!');
+                $('#subMessage').addClass('hidden');
+                $('#message').addClass('bg-green-400');
+                $('#message').removeClass('bg-red-400');
+                $('#message').removeClass('hidden');
+            </script>";
         }
         ?>
 
