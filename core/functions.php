@@ -36,11 +36,11 @@
     }
 
     function submitPost($pdo, $postedBy, $postContent) {
-        $submitPostQuery = "INSERT INTO posts (posted_by, content) VALUES (?, ?)";
-        $submitPostStatement = $pdo -> prepare($submitPostQuery);
-        $execute_submitPostStatement = $submitPostStatement -> execute([$postedBy, $postContent]);
+        $query = "INSERT INTO posts (posted_by, content) VALUES (?, ?)";
+        $statement = $pdo -> prepare($query);
+        $executeStatement = $statement -> execute([$postedBy, $postContent]);
 
-        if($execute_submitPostStatement) {
+        if($executeStatement) {
             return "postSubmissionSuccess";
         } else {
             return "postSubmissionFailed";
@@ -48,11 +48,11 @@
     }
 
     function editPost($pdo, $postId, $postedBy, $editedBy, $newPostContent) {
-        $editPostQuery = "UPDATE posts SET content = ? WHERE post_id = ?";
-        $editPostStatement = $pdo -> prepare($editPostQuery);
-        $execute_editPostStatement = $editPostStatement -> execute([$newPostContent, $postId]);
+        $query = "UPDATE posts SET content = ? WHERE post_id = ?";
+        $statement = $pdo -> prepare($query);
+        $executeStatement = $statement -> execute([$newPostContent, $postId]);
 
-        if($execute_editPostStatement) {
+        if($executeStatement) {
             return "postEditingSuccess";
         } else {
             return "postEditingFailed";
@@ -60,24 +60,56 @@
     }
 
     function deletePost($pdo, $postId) {
-        $deletePostQuery = "DELETE FROM posts WHERE post_id = ?";
-        $deletePostStatement = $pdo -> prepare($deletePostQuery);
-        $execute_deletePostStatement = $deletePostStatement -> execute([$postId]);
+        $query = "DELETE FROM posts WHERE post_id = ?";
+        $statement = $pdo -> prepare($query);
+        $executeStatement = $statement -> execute([$postId]);
 
-        if($execute_deletePostStatement) {
+        if($executeStatement) {
             return "postDeletionSuccess";
         } else {
             return "postDeletionFailed";
         }
     }
 
-    function getAllPostsByRecency($pdo) {
-        $getPostsQuery = "SELECT * FROM posts ORDER BY time_posted DESC;";
-        $getPostsStatement = $pdo -> prepare($getPostsQuery);
-        $execute_getPostsStatement = $getPostsStatement -> execute();
+    function submitComment($pdo, $commentedBy, $postId, $commentContent) {
+        $query = "INSERT INTO comments (commented_by, on_post_id, content) VALUES (?, ?, ?)";
+        $statement = $pdo -> prepare($query);
+        $executeStatement = $statement -> execute([$commentedBy, $postId, $commentContent]);
 
-        if($execute_getPostsStatement) {
-            return $getPostsStatement -> fetchAll();
+        if($executeStatement) {
+            return "commentSubmissionSuccess";
+        } else {
+            return "commentSubmissionFailed";
+        }
+    }
+
+    function editComment($pdo, $postId) {
+
+    }
+
+    function deleteComment($pdo, $postId) {
+
+    }
+
+    function getAllPostsByRecency($pdo) {
+        $query = "SELECT * FROM posts ORDER BY time_posted DESC;";
+        $statement = $pdo -> prepare($query);
+        $executeStatement = $statement -> execute();
+
+        if($executeStatement) {
+            return $statement -> fetchAll();
+        } else {
+            return "failed";
+        }
+    }
+
+    function getAllCommentsByRecencyByPostId($pdo, $post_id) {
+        $query = "SELECT * FROM comments WHERE on_post_id = ? ORDER BY time_commented DESC;";
+        $statement = $pdo -> prepare($query);
+        $executeStatement = $statement -> execute([$post_id]);
+
+        if($executeStatement) {
+            return $statement -> fetchAll();
         } else {
             return "failed";
         }

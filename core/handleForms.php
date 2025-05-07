@@ -54,4 +54,27 @@
         $function = deletePost($pdo, $postId);
         echo $function;
     }
+
+    if(isset($_POST['submitCommentRequest'])) {
+        $commentedBy = $_SESSION['user_id'];
+        $postId = $_POST['post_id'];
+        $commentContent = $_POST['comment_content'];
+
+        $function = submitComment($pdo, $commentedBy, $postId, $commentContent);
+        echo $function;
+    }
+
+    if(isset($_POST['editCommentRequest'])) {
+        $postId = $_POST['post_id'];
+
+        $function = editComment($pdo, $postId);
+        echo $function;
+    }
+
+    if(isset($_POST['deleteCommentRequest'])) {
+        $postId = $_POST['post_id'];
+
+        $function = deleteComment($pdo, $postId);
+        echo $function;
+    }
 ?>

@@ -79,18 +79,15 @@ $('#postForm').on('submit', function(event){
     })
 })
 
-////////////////////////////////////////////////
-////////////////////////////////////////////////
-
-$('.editPostButton').on('click', function(event) {
-    const post_id = $(this).closest('.post').find('.post_id');
-    const displayOnlyPostContent = $(this).closest('.post').find('.displayOnlyPostContent');
-    const editablePostContent = $(this).closest('.post').find('.editablePostContent');
-    const confirmationSection = $(this).closest('.post').find('.confirmationSection');
-    const confirmMessage = $(this).closest('.post').find('.confirmMessage');
-    const confirmButton = $(this).closest('.post').find('.confirmSec_Y');
-    const cancelButton = $(this).closest('.post').find('.confirmSec_N');
-    const commentSection = $(this).closest('.post').find('.commentSection');
+$('#editPostButton').on('click', function(event) {
+    const post_id = $(this).closest('#post').find('#post_id');
+    const displayOnlyPostContent = $(this).closest('#post').find('#displayOnlyPostContent');
+    const editablePostContent = $(this).closest('#post').find('#editablePostContent');
+    const confirmationSection = $(this).closest('#post').find('#confirmationSection');
+    const confirmMessage = $(this).closest('#post').find('#confirmMessage');
+    const confirmButton = $(this).closest('#post').find('#confirmSec_Y');
+    const cancelButton = $(this).closest('#post').find('#confirmSec_N');
+    const commentSection = $(this).closest('#post').find('#commentSection');
 
     displayOnlyPostContent.addClass("hidden");
     commentSection.addClass("hidden");
@@ -134,13 +131,13 @@ $('.editPostButton').on('click', function(event) {
     })
 })
 
-$('.deletePostbutton').on('click', function(event) {
-    const post_id = $(this).closest('.post').find('.post_id');
-    const confirmationSection = $(this).closest('.post').find('.confirmationSection');
-    const confirmMessage = $(this).closest('.post').find('.confirmMessage');
-    const confirmButton = $(this).closest('.post').find('.confirmSec_Y');
-    const cancelButton = $(this).closest('.post').find('.confirmSec_N');
-    const commentSection = $(this).closest('.post').find('.commentSection');
+$('#deletePostbutton').on('click', function(event) {
+    const post_id = $(this).closest('#post').find('#post_id');
+    const confirmationSection = $(this).closest('#post').find('#confirmationSection');
+    const confirmMessage = $(this).closest('#post').find('#confirmMessage');
+    const confirmButton = $(this).closest('#post').find('#confirmSec_Y');
+    const cancelButton = $(this).closest('#post').find('#confirmSec_N');
+    const commentSection = $(this).closest('#post').find('#commentSection');
 
 
     commentSection.addClass("hidden");
@@ -174,5 +171,32 @@ $('.deletePostbutton').on('click', function(event) {
     $(cancelButton).on('click', function(event){
         confirmationSection.addClass("hidden");
         commentSection.removeClass("hidden");
+    })
+})
+
+$('#commentForm').on('submit', function(event){
+    event.preventDefault();
+    const formData = {
+        post_id: parseInt($(this).closest('#post').find('#post_id').text()),
+        comment_content: $('#commentContent').val(),
+        submitCommentRequest: 1
+    };
+    console.log(formData);
+    $.ajax({
+        type: "POST",
+        url: handleFormDirectory,
+        data: formData,
+        success: function(data) {
+            if(data.trim() == "commentSubmissionSuccess") {
+                window.location.href = "index.php?commentSubmissionSuccess=1"
+            } else {
+                $('#mainMessage').text("Failed to Submit Comment!");
+                $('#subMessage').text(data.trim());
+                $('#subMessage').removeClass('hidden');
+                $('#message').addClass('bg-red-400');
+                $('#message').removeClass('bg-green-400');
+                $('#message').removeClass('hidden');
+            }
+        }
     })
 })
