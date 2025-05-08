@@ -40,9 +40,8 @@
     if(isset($_POST['editPostRequest'])) {
         $postId = $_POST['post_id'];
         $postedBy = getPostDataById($pdo, $postId)['posted_by'];
-        
         $editedBy = $_SESSION['user_id'];
-        $newPostContent = $_POST['newPostContent'];
+        $newPostContent = $_POST['new_post_content'];
 
         $function = editPost($pdo, $postId, $postedBy, $editedBy, $newPostContent);
         echo $function;
@@ -65,16 +64,19 @@
     }
 
     if(isset($_POST['editCommentRequest'])) {
-        $postId = $_POST['post_id'];
+        $commentId = $_POST['comment_id'];
+        $commentedBy = getCommentDataById($pdo, $commentId)['commented_by'];
+        $editedBy = $_SESSION['user_id'];
+        $newCommentContent = $_POST['new_comment_content'];
 
-        $function = editComment($pdo, $postId);
+        $function = editComment($pdo, $commentId, $commentedBy, $editedBy, $newCommentContent);
         echo $function;
     }
 
     if(isset($_POST['deleteCommentRequest'])) {
-        $postId = $_POST['post_id'];
+        $commentId = $_POST['comment_id'];
 
-        $function = deleteComment($pdo, $postId);
+        $function = deleteComment($pdo, $commentId);
         echo $function;
     }
 ?>

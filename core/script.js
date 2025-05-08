@@ -55,7 +55,7 @@ $('#userLoginForm').on('submit', function(event){
     })
 })
 
-$('#postForm').on('submit', function(event){
+$('#postForm').on('submit', function(){
     const formData = {
         postContent: $('#postContent').val(),
         submitPostRequest: 1
@@ -79,18 +79,23 @@ $('#postForm').on('submit', function(event){
     })
 })
 
-$('#editPostButton').on('click', function(event) {
-    const post_id = $(this).closest('#post').find('#post_id');
-    const displayOnlyPostContent = $(this).closest('#post').find('#displayOnlyPostContent');
-    const editablePostContent = $(this).closest('#post').find('#editablePostContent');
-    const confirmationSection = $(this).closest('#post').find('#confirmationSection');
-    const confirmMessage = $(this).closest('#post').find('#confirmMessage');
-    const confirmButton = $(this).closest('#post').find('#confirmSec_Y');
-    const cancelButton = $(this).closest('#post').find('#confirmSec_N');
-    const commentSection = $(this).closest('#post').find('#commentSection');
+$('.editPostButton').on('click', function() {
+    resetAllPostCommentAlterations();
+
+    const post = $(this).closest('.post');
+    const post_id = post.find('.post_id');
+    const displayOnlyPostContent = post.find('.displayOnlyPostContent');
+    const editablePostContent = post.find('.editablePostContent');
+    const confirmationSection = post.find('.confirmationSection');
+    const confirmMessage = post.find('.confirmMessage');
+    const confirmButton = post.find('.confirmSec_Y');
+    const cancelButton = post.find('.confirmSec_N');
+    const commentSection = post.find('.commentSection');
+    const lineSplitComment = post.find('.lineSplitComment');
 
     displayOnlyPostContent.addClass("hidden");
     commentSection.addClass("hidden");
+    lineSplitComment.addClass("hidden");
     editablePostContent.removeClass("hidden");
     confirmMessage.text("Are you sure you want to edit this post?");
     confirmationSection.removeClass("hidden");
@@ -99,7 +104,7 @@ $('#editPostButton').on('click', function(event) {
         if(displayOnlyPostContent.text().trim() !== editablePostContent.val().trim()) {
             const formData = {
                 post_id: parseInt(post_id.text()),
-                newPostContent: editablePostContent.val(),
+                new_post_content: editablePostContent.val(),
                 editPostRequest: 1
             };
             $.ajax({
@@ -128,19 +133,24 @@ $('#editPostButton').on('click', function(event) {
         editablePostContent.val(displayOnlyPostContent.text().trim());
         displayOnlyPostContent.removeClass("hidden");
         commentSection.removeClass("hidden");
+        lineSplitComment.removeClass("hidden");
     })
 })
 
-$('#deletePostbutton').on('click', function(event) {
-    const post_id = $(this).closest('#post').find('#post_id');
-    const confirmationSection = $(this).closest('#post').find('#confirmationSection');
-    const confirmMessage = $(this).closest('#post').find('#confirmMessage');
-    const confirmButton = $(this).closest('#post').find('#confirmSec_Y');
-    const cancelButton = $(this).closest('#post').find('#confirmSec_N');
-    const commentSection = $(this).closest('#post').find('#commentSection');
+$('.deletePostButton').on('click', function() {
+    resetAllPostCommentAlterations();
 
+    const post = $(this).closest('.post');
+    const post_id = post.find('.post_id');
+    const confirmationSection = post.find('.confirmationSection');
+    const confirmMessage = post.find('.confirmMessage');
+    const confirmButton = post.find('.confirmSec_Y');
+    const cancelButton = post.find('.confirmSec_N');
+    const commentSection = post.find('.commentSection');
+    const lineSplitComment = post.find('.lineSplitComment');
 
     commentSection.addClass("hidden");
+    lineSplitComment.addClass("hidden");
     confirmMessage.text("Are you sure you want to delete this post?");
     confirmationSection.removeClass("hidden");
     
@@ -171,14 +181,15 @@ $('#deletePostbutton').on('click', function(event) {
     $(cancelButton).on('click', function(event){
         confirmationSection.addClass("hidden");
         commentSection.removeClass("hidden");
+        lineSplitComment.removeClass("hidden");
     })
 })
 
-$('#commentForm').on('submit', function(event){
+$('.commentForm').on('submit', function(event){
     event.preventDefault();
     const formData = {
-        post_id: parseInt($(this).closest('#post').find('#post_id').text()),
-        comment_content: $('#commentContent').val(),
+        post_id: parseInt($(this).closest('.post').find('.post_id').text()),
+        comment_content: $(this).find('.commentContent').val(),
         submitCommentRequest: 1
     };
     console.log(formData);
@@ -200,3 +211,130 @@ $('#commentForm').on('submit', function(event){
         }
     })
 })
+
+$('.editCommentButton').on('click', function() {
+    resetAllPostCommentAlterations();
+
+    const comment = $(this).closest('.comment');
+    const comment_id = comment.find('.comment_id');
+    const displayOnlyCommentContent = comment.find('.displayOnlyCommentContent');
+    const editableCommentContent = comment.find('.editableCommentContent');
+    const confirmationSection = comment.find('.confirmationSection');
+    const confirmMessage = comment.find('.confirmMessage');
+    const confirmButton = comment.find('.confirmSec_Y');
+    const cancelButton = comment.find('.confirmSec_N');
+
+    displayOnlyCommentContent.addClass("hidden");
+    editableCommentContent.removeClass("hidden");
+    confirmMessage.text("Are you sure you want to edit this post?");
+    confirmationSection.removeClass("hidden");
+    
+    $(confirmButton).on('click', function(event){
+        if(displayOnlyCommentContent.text().trim() !== editableCommentContent.val().trim()) {
+            const formData = {
+                comment_id: parseInt(comment_id.text()),
+                new_comment_content: editableCommentContent.val(),
+                editCommentRequest: 1
+            };
+            $.ajax({
+                type: "POST",
+                url: handleFormDirectory,
+                data: formData,
+                success: function(data) {
+                    if(data.trim() == "commentEditingSuccess") {
+                        window.location.href = "index.php?commentEditSuccess=1"
+                    } else {
+                        $('#mainMessage').text("Failed to Edit Post!");
+                        $('#subMessage').text(data.trim());
+                        $('#subMessage').removeClass('hidden');
+                        $('#message').addClass('bg-red-400');
+                        $('#message').removeClass('bg-green-400');
+                        $('#message').removeClass('hidden');
+                    }
+                }
+            })
+        }
+    })
+
+    $(cancelButton).on('click', function(event){
+        editableCommentContent.addClass("hidden");
+        confirmationSection.addClass("hidden");
+        editableCommentContent.val(displayOnlyCommentContent.text().trim());
+        displayOnlyCommentContent.removeClass("hidden");
+    })
+})
+
+$('.deleteCommentButton').on('click', function() {
+    resetAllPostCommentAlterations();
+    
+    const comment = $(this).closest('.comment')
+    const comment_id = comment.find('.comment_id');
+    const confirmationSection = comment.find('.confirmationSection');
+    const confirmMessage = comment.find('.confirmMessage');
+    const confirmButton = comment.find('.confirmSec_Y');
+    const cancelButton = comment.find('.confirmSec_N');
+    const commentSection = comment.find('.commentSection');
+
+    commentSection.addClass("hidden");
+    confirmMessage.text("Are you sure you want to delete this comment?");
+    confirmationSection.removeClass("hidden");
+    
+    $(confirmButton).on('click', function(event){
+        const formData = {
+            comment_id: parseInt(comment_id.text()),
+            deleteCommentRequest: 1
+        };
+        $.ajax({
+            type: "POST",
+            url: handleFormDirectory,
+            data: formData,
+            success: function(data) {
+                if(data.trim() == "commentDeletionSuccess") {
+                    window.location.href = "index.php?commentDeleteSuccess=1"
+                } else {
+                    $('#mainMessage').text("Failed to Delete Comment!");
+                    $('#subMessage').text(data.trim());
+                    $('#subMessage').removeClass('hidden');
+                    $('#message').addClass('bg-red-400');
+                    $('#message').removeClass('bg-green-400');
+                    $('#message').removeClass('hidden');
+                }
+            }
+        })
+    })
+
+    $(cancelButton).on('click', function(event){
+        confirmationSection.addClass("hidden");
+        commentSection.removeClass("hidden");
+    })
+})
+
+function resetAllPostCommentAlterations() {
+    $('#postsSection').find('.post').each(function() {
+        const post = $(this);
+        const displayOnlyPostContent = post.find('.displayOnlyPostContent');
+        const editablePostContent = post.find('.editablePostContent');
+        const postConfirmationSection = post.find('.confirmationSection');
+        const PostCommentSection = post.find('.commentSection');
+        const lineSplitComment = post.find('.lineSplitComment');
+    
+        editablePostContent.addClass("hidden");
+        postConfirmationSection.addClass("hidden");
+        editablePostContent.val(displayOnlyPostContent.text().trim());
+        displayOnlyPostContent.removeClass("hidden");
+        PostCommentSection.removeClass("hidden");
+        lineSplitComment.removeClass("hidden");
+    
+        post.find('.comment').each(function() {
+            const comment = $(this);
+            const displayOnlyCommentContent = comment.find('.displayOnlyCommentContent');
+            const editableCommentContent = comment.find('.editableCommentContent');
+            const commentConfirmationSection = comment.find('.confirmationSection');
+    
+            editableCommentContent.addClass("hidden");
+            commentConfirmationSection.addClass("hidden");
+            editableCommentContent.val(displayOnlyCommentContent.text().trim());
+            displayOnlyCommentContent.removeClass("hidden");
+        })
+    })
+}

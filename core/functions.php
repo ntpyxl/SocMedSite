@@ -83,12 +83,28 @@
         }
     }
 
-    function editComment($pdo, $postId) {
+    function editComment($pdo, $commentId, $commentedBy, $editedBy, $newCommentContent) {
+        $query = "UPDATE comments SET content = ? WHERE comment_id = ?";
+        $statement = $pdo -> prepare($query);
+        $executeStatement = $statement -> execute([$newCommentContent, $commentId]);
 
+        if($executeStatement) {
+            return "commentEditingSuccess";
+        } else {
+            return "commentEditingFailed";
+        }
     }
 
-    function deleteComment($pdo, $postId) {
+    function deleteComment($pdo, $commentId) {
+        $query = "DELETE FROM comments WHERE comment_id = ?";
+        $statement = $pdo -> prepare($query);
+        $executeStatement = $statement -> execute([$commentId]);
 
+        if($executeStatement) {
+            return "commentDeletionSuccess";
+        } else {
+            return "commentDeletionFailed";
+        }
     }
 
     function getAllPostsByRecency($pdo) {
@@ -148,6 +164,18 @@
         $query = "SELECT * FROM posts WHERE post_id = ?";
         $statement = $pdo -> prepare($query);
         $executeQuery = $statement -> execute([$post_id]);
+
+        if($executeQuery) {
+            return $statement -> fetch();
+        } else {
+            return "failed";
+        }
+    }
+
+    function getCommentDataById($pdo, $comment_id) {
+        $query = "SELECT * FROM comments WHERE comment_id = ?";
+        $statement = $pdo -> prepare($query);
+        $executeQuery = $statement -> execute([$comment_id]);
 
         if($executeQuery) {
             return $statement -> fetch();

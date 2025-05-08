@@ -72,106 +72,124 @@ if(!isset($_SESSION['user_id'])) {
                             $('#message').removeClass('hidden');
                         </script>";
                     }
+                    if(isset($_GET['commentEditSuccess'])) {
+                        echo "<script>
+                            $('#mainMessage').text('Successfully Edited Comment!');
+                            $('#subMessage').addClass('hidden');
+                            $('#message').addClass('bg-green-400');
+                            $('#message').removeClass('bg-red-400');
+                            $('#message').removeClass('hidden');
+                        </script>";
+                    }
+                    if(isset($_GET['commentDeleteSuccess'])) {
+                        echo "<script>
+                            $('#mainMessage').text('Successfully Deleted Comment!');
+                            $('#subMessage').addClass('hidden');
+                            $('#message').addClass('bg-green-400');
+                            $('#message').removeClass('bg-red-400');
+                            $('#message').removeClass('hidden');
+                        </script>";
+                    }
                     ?>
                 </div>
                 
             </div>
-            <div class="grid col-span-12 lg:col-span-5 p-3 border-2 border-black">
-                <div>
+
+            <div class="grid col-span-12 lg:col-span-5">
+                <div class="p-3 border-2 border-black">
                     <h3 class="text-xl font-semibold">What's on your thought?</h3>
                     <form id="postForm" class="mt-2">
-                        <textarea id="postContent" class="w-full px-3 py-2 border-2 border-black resize-none focus:bg-cyan-100" rows="3"></textarea>
+                        <textarea id="postContent" class="w-full px-3 py-2 border-2 border-black resize-none focus:bg-cyan-100" rows="3" required></textarea>
                         <input type="submit" id="submitPost" value="Post!" class="mt-2 px-5 py-1 border-2 border-black rounded-lg text-lg font-bold hover:bg-cyan-200 cursor-pointer hover:scale-105 transition duration-100 ease-out">
                     </form>
                 </div>
 
-                <hr class="mt-6 mb-4 border-t-2 rounded-full w-11/12 mx-auto">
-
-                <div>
+                <div id="postsSection">
                     <?php
                     $allPostsSortedByRecency = getAllPostsByRecency($pdo);
                     foreach($allPostsSortedByRecency as $post) {
                     ?>
-                        <div id="post" class="my-2 p-3 border-2 border-black">
-                            <p id="post_id" class="hidden"><?php echo $post['post_id']; ?></p>
+                        <div class="my-2 p-3 border-2 border-black post">
+                            <p class="hidden post_id"><?php echo $post['post_id']; ?></p>
                             <div class="flex justify-between items-center">
                                 <div class="break-words max-w-full">
                                     <?php 
                                     $posterData = getUserInfoDataById($pdo, $post['posted_by']);
                                     ?>
-                                    <p class="font-semibold">Posted by: <br class="md:hidden"><?php echo $posterData['firstname'] . ' ' . $posterData['lastname'] ?></p>
+                                    <p class="font-semibold"><br class="md:hidden"><?php echo $posterData['firstname'] . ' ' . $posterData['lastname'] ?></p>
                                 </div>
                                 <?php
                                 if($_SESSION['user_id'] == $post['posted_by']) {
                                 ?>
                                     <div class="flex mt-2 sm:mt-0">
-                                        <button id="editPostButton" class="mx-1 px-4 py-2 md:py-1 border-2 border-black rounded-lg font-semibold hover:bg-cyan-200 cursor-pointer hover:scale-105 transition duration-100 ease-out">Edit</button>
-                                        <button id="deletePostbutton" class="mx-1 px-4 py-2 md:py-1 border-2 border-black rounded-lg font-semibold hover:bg-cyan-200 cursor-pointer hover:scale-105 transition duration-100 ease-out">Delete</button>
+                                        <button class="mx-1 px-4 py-2 md:py-1 border-2 border-black rounded-lg font-semibold hover:bg-cyan-200 cursor-pointer hover:scale-105 transition duration-100 ease-out editPostButton">Edit</button>
+                                        <button class="mx-1 px-4 py-2 md:py-1 border-2 border-black rounded-lg font-semibold hover:bg-cyan-200 cursor-pointer hover:scale-105 transition duration-100 ease-out deletePostButton">Delete</button>
                                     </div>
                                 <?php
                                 }
                                 ?>
                             </div>
-                            <div id="displayOnlyPostContent" class="px-1 py-3 font-normal">
+                            <div class="px-1 py-3 font-normal displayOnlyPostContent">
                                 <?php echo $post['content']; ?>
                             </div>
 
-                            <textarea id="editablePostContent" rows="4" class="w-full my-3 px-3 py-1 border-2 border-black resize-none focus:bg-cyan-100 hidden"><?php echo $post['content'] ?></textarea>
+                            <textarea rows="4" class="w-full my-3 px-3 py-1 border-2 border-black resize-none focus:bg-cyan-100 font-normal hidden editablePostContent"><?php echo $post['content'] ?></textarea>
 
-                            <div id="confirmationSection" class="p-1 hidden">
+                            <div class="p-1 hidden confirmationSection">
                                 <hr class="mb-3 border-t-2 rounded-full w-11/12 mx-auto">
 
-                                <p id="confirmMessage" class="font-semibold"></p>
-                                <button id="confirmSec_Y" class="mt-2 px-4 py-2 md:py-1 border-2 border-black rounded-lg font-semibold hover:bg-red-300 cursor-pointer hover:scale-105 transition duration-100 ease-out">Yes</button>
-                                <button id="confirmSec_N" class="mt-2 px-4 py-2 md:py-1 border-2 border-black rounded-lg font-semibold hover:bg-cyan-200 cursor-pointer hover:scale-105 transition duration-100 ease-out ">No</button>
+                                <p class="font-semibold confirmMessage"></p>
+                                <button class="mt-2 px-4 py-2 md:py-1 border-2 border-black rounded-lg font-semibold hover:bg-red-300 cursor-pointer hover:scale-105 transition duration-100 ease-out confirmSec_Y">Yes</button>
+                                <button class="mt-2 px-4 py-2 md:py-1 border-2 border-black rounded-lg font-semibold hover:bg-cyan-200 cursor-pointer hover:scale-105 transition duration-100 ease-out confirmSec_N">No</button>
                             </div>
 
-                            <hr class="mt-3 border-t-2 rounded-full w-full mx-auto">
+                            <hr class="mt-3 border-t-2 rounded-full w-full mx-auto lineSplitComment">
 
-                            <div id="commentSection" class="py-1 font-semibold ">
+                            <div class="py-1 font-semibold commentSection">
                                 COMMENTS
-                                <form id="commentForm" class="flex flex-col lg:flex-row mt-2">
-                                    <textarea id="commentContent" class="w-full px-3 py-2 border-2 border-black font-normal resize-none focus:bg-cyan-100" rows="1"></textarea>
-                                    <input type="submit" id="submitComment" value="Comment!" class="ml-0 lg:ml-5 mt-2 px-3 py-2 lg:py-0 border-2 border-black rounded-lg text-lg font-bold hover:bg-cyan-200 cursor-pointer hover:scale-105 transition duration-100 ease-out">
+                                <form class="flex flex-col lg:flex-row mt-2 commentForm">
+                                    <textarea rows="1" class="w-full px-3 py-2 border-2 border-black font-normal resize-none focus:bg-cyan-100 commentContent" required></textarea>
+                                    <input type="submit" value="Comment!" class="ml-0 lg:ml-5 mt-2 px-3 py-2 lg:py-0 border-2 border-black rounded-lg text-lg font-bold hover:bg-cyan-200 cursor-pointer hover:scale-105 transition duration-100 ease-out submitComment">
                                 </form>
 
-                                <div id="mainCommentSection" class="p-2">
+                                <div class="p-2 mainCommentSection">
                                     <?php
                                     $allPostCommentsSortedByRecency = getAllCommentsByRecencyByPostId($pdo, $post['post_id']);
                                     foreach($allPostCommentsSortedByRecency as $comment) {
                                     ?>
-                                        <div class="border-2 border-black p-2 comment">
+                                        <div class="border-2 border-black mt-2 mb-3 p-2 comment">
+                                            <p class="hidden comment_id"><?php echo $comment['comment_id']; ?></p>
                                             <div class="flex justify-between items-center">
                                                 <div class="break-words max-w-full">
                                                     <?php 
                                                     $commenterData = getUserInfoDataById($pdo, $comment['commented_by']);
                                                     ?>
-                                                    <p class="font-semibold">Commented by: <br class="md:hidden"><?php echo $commenterData['firstname'] . ' ' . $commenterData['lastname'] ?></p>
+                                                    <p class="font-semibold"><br class="md:hidden"><?php echo $commenterData['firstname'] . ' ' . $commenterData['lastname'] ?></p>
                                                 </div>
                                                 <?php
                                                 if($_SESSION['user_id'] == $comment['commented_by']) {
                                                 ?>
                                                     <div class="flex mt-2 sm:mt-0">
-                                                        <button id="editCommentButton" class="mx-1 px-4 py-2 md:py-1 border-2 border-black rounded-lg font-semibold hover:bg-cyan-200 cursor-pointer hover:scale-105 transition duration-100 ease-out">Edit</button>
-                                                        <button id="deleteCommentbutton" class="mx-1 px-4 py-2 md:py-1 border-2 border-black rounded-lg font-semibold hover:bg-cyan-200 cursor-pointer hover:scale-105 transition duration-100 ease-out">Delete</button>
+                                                        <button class="mx-1 px-4 py-2 md:py-1 border-2 border-black rounded-lg font-semibold hover:bg-cyan-200 cursor-pointer hover:scale-105 transition duration-100 ease-out editCommentButton">Edit</button>
+                                                        <button class="mx-1 px-4 py-2 md:py-1 border-2 border-black rounded-lg font-semibold hover:bg-cyan-200 cursor-pointer hover:scale-105 transition duration-100 ease-out deleteCommentButton">Delete</button>
                                                     </div>
                                                 <?php
                                                 }
                                                 ?>
                                             </div>
 
-                                            <div id="displayOnlyCommentContent" class="px-1 py-1 font-normal">
+                                            <div class="px-1 py-1 font-normal displayOnlyCommentContent">
                                                 <?php echo $comment['content']; ?>
                                             </div>
 
-                                            <textarea id="editableCommentContent" rows="4" class="w-full my-3 px-3 py-1 border-2 border-black resize-none focus:bg-cyan-100 hidden"><?php echo $post['content'] ?></textarea>
+                                            <textarea rows="4" class="w-full my-3 px-3 py-1 border-2 border-black resize-none focus:bg-cyan-100 font-normal hidden editableCommentContent"><?php echo $comment['content'] ?></textarea>
 
-                                            <div id="confirmationSection" class="p-1 hidden">
+                                            <div class="p-1 hidden confirmationSection">
                                                 <hr class="mb-3 border-t-2 rounded-full w-11/12 mx-auto">
 
-                                                <p id="confirmMessage" class="font-semibold"></p>
-                                                <button id="confirmSec_Y" class="mt-2 px-4 py-2 md:py-1 border-2 border-black rounded-lg font-semibold hover:bg-red-300 cursor-pointer hover:scale-105 transition duration-100 ease-out">Yes</button>
-                                                <button id="confirmSec_N" class="mt-2 px-4 py-2 md:py-1 border-2 border-black rounded-lg font-semibold hover:bg-cyan-200 cursor-pointer hover:scale-105 transition duration-100 ease-out ">No</button>
+                                                <p class="font-semibold confirmMessage"></p>
+                                                <button class="mt-2 px-4 py-2 md:py-1 border-2 border-black rounded-lg font-semibold hover:bg-red-300 cursor-pointer hover:scale-105 transition duration-100 ease-out confirmSec_Y">Yes</button>
+                                                <button class="mt-2 px-4 py-2 md:py-1 border-2 border-black rounded-lg font-semibold hover:bg-cyan-200 cursor-pointer hover:scale-105 transition duration-100 ease-out confirmSec_N">No</button>
                                             </div>
                                         </div>
                                     <?php
@@ -185,6 +203,7 @@ if(!isset($_SESSION['user_id'])) {
                     ?>
                 </div>
             </div>
+
             <div class="grid col-span-12 lg:col-span-4 p-3 border-2 border-black">
                 <h2 class="text-center text-2xl font-semibold">RECENT ACTIVITIES</h2>
             </div>
