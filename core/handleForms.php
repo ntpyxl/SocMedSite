@@ -12,6 +12,10 @@
         if(getUserAccDataByUsername($pdo, $username) == "no match") {
             if($_POST['password'] == $_POST['verifyPassword']) {
                 $function = registerUser($pdo, $username, $password, $firstname, $lastname);
+                if($function == "registrationSuccess") {
+                    $recentUserId = getRecentUserId($pdo)['user_id'];
+                    logAction($pdo, 1, $recentUserId, $recentUserId, 1, $recentUserId);
+                }
                 echo $function;
             } else {
                 echo "passwordNotVerified";
@@ -34,23 +38,32 @@
         $postContent = $_POST['postContent'];
 
         $function = submitPost($pdo, $postedBy, $postContent);
+        if($function == "postSubmissionSuccess") {
+            logAction($pdo, 1, $postedBy, getRecentPostId($pdo)['post_id'], 2, $postedBy);
+        }
         echo $function;
     }
 
     if(isset($_POST['editPostRequest'])) {
         $postId = $_POST['post_id'];
         $postedBy = getPostDataById($pdo, $postId)['posted_by'];
-        $editedBy = $_SESSION['user_id'];
         $newPostContent = $_POST['new_post_content'];
 
-        $function = editPost($pdo, $postId, $postedBy, $editedBy, $newPostContent);
+        $function = editPost($pdo, $postId, $newPostContent);
+        if($function == "postEditingSuccess") {
+            logAction($pdo, 2, $_SESSION['user_id'], $postId, 2, $postedBy);
+        }
         echo $function;
     }
     
     if(isset($_POST['deletePostRequest'])) {
         $postId = $_POST['post_id'];
+        $postedBy = getPostDataById($pdo, $postId)['posted_by'];
 
         $function = deletePost($pdo, $postId);
+        if($function == "postDeletionSuccess") {
+            logAction($pdo, 3, $_SESSION['user_id'], $postId, 2, $postedBy);
+        }
         echo $function;
     }
 
@@ -60,23 +73,32 @@
         $commentContent = $_POST['comment_content'];
 
         $function = submitComment($pdo, $commentedBy, $postId, $commentContent);
+        if($function == "commentSubmissionSuccess") {
+            logAction($pdo, 1, $commentedBy, getRecentCommentId($pdo)['comment_id'], 3, $commentedBy);
+        }
         echo $function;
     }
 
     if(isset($_POST['editCommentRequest'])) {
         $commentId = $_POST['comment_id'];
         $commentedBy = getCommentDataById($pdo, $commentId)['commented_by'];
-        $editedBy = $_SESSION['user_id'];
         $newCommentContent = $_POST['new_comment_content'];
 
-        $function = editComment($pdo, $commentId, $commentedBy, $editedBy, $newCommentContent);
+        $function = editComment($pdo, $commentId, $newCommentContent);
+        if($function == "commentEditingSuccess") {
+            logAction($pdo, 2, $_SESSION['user_id'], getRecentCommentId($pdo)['comment_id'], 3, $commentedBy);
+        }
         echo $function;
     }
 
     if(isset($_POST['deleteCommentRequest'])) {
         $commentId = $_POST['comment_id'];
+        $commentedBy = getCommentDataById($pdo, $commentId)['commented_by'];
 
         $function = deleteComment($pdo, $commentId);
+        if($function == "commentDeletionSuccess") {
+            logAction($pdo, 3, $_SESSION['user_id'], $commentId, 3, $commentedBy);
+        }
         echo $function;
     }
 ?>

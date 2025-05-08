@@ -47,7 +47,7 @@
         }
     }
 
-    function editPost($pdo, $postId, $postedBy, $editedBy, $newPostContent) {
+    function editPost($pdo, $postId, $newPostContent) {
         $query = "UPDATE posts SET content = ? WHERE post_id = ?";
         $statement = $pdo -> prepare($query);
         $executeStatement = $statement -> execute([$newPostContent, $postId]);
@@ -60,11 +60,15 @@
     }
 
     function deletePost($pdo, $postId) {
-        $query = "DELETE FROM posts WHERE post_id = ?";
-        $statement = $pdo -> prepare($query);
-        $executeStatement = $statement -> execute([$postId]);
+        $delPostQuery = "DELETE FROM posts WHERE post_id = ?";
+        $delPostStatement = $pdo -> prepare($delPostQuery);
+        $execute_delPostStatement = $delPostStatement -> execute([$postId]);
 
-        if($executeStatement) {
+        $delCommentsQuery = "DELETE FROM comments WHERE on_post_id = ?";
+        $delCommentsStatement = $pdo -> prepare($delCommentsQuery);
+        $execute_delCommentsStatement = $delCommentsStatement -> execute([$postId]);
+
+        if($execute_delPostStatement && $execute_delCommentsStatement) {
             return "postDeletionSuccess";
         } else {
             return "postDeletionFailed";
@@ -83,7 +87,7 @@
         }
     }
 
-    function editComment($pdo, $commentId, $commentedBy, $editedBy, $newCommentContent) {
+    function editComment($pdo, $commentId, $newCommentContent) {
         $query = "UPDATE comments SET content = ? WHERE comment_id = ?";
         $statement = $pdo -> prepare($query);
         $executeStatement = $statement -> execute([$newCommentContent, $commentId]);
@@ -128,6 +132,41 @@
             return $statement -> fetchAll();
         } else {
             return "failed";
+        }
+    }
+
+    function getAllLogsByRecency($pdo) {
+        $query = "SELECT 
+                    log_id,
+                    actions.action_name,
+                    done_by,
+                    content_affected,
+                    content_form.content_form_name,
+                    content_owner_id,
+                    time_logged
+                FROM logs
+                INNER JOIN actions ON logs.action_id = actions.action_id
+                INNER JOIN content_form ON logs.content_form_id = content_form.content_form_id
+                ORDER BY time_logged DESC;";
+        $statement = $pdo -> prepare($query);
+        $executeStatement = $statement -> execute();
+
+        if($executeStatement) {
+            return $statement -> fetchAll();
+        } else {
+            return "failed";
+        }
+    }
+
+    function logAction($pdo, $action, $doneBy, $contentAffected, $contentForm, $contentOwner) {
+        $query = "INSERT INTO logs (action_id, done_by, content_affected, content_form_id, content_owner_id) VALUES (?, ?, ?, ?, ?)";
+        $statement = $pdo -> prepare($query);
+        $executeStatement = $statement -> execute([$action, $doneBy, $contentAffected, $contentForm, $contentOwner]);
+
+        if($executeStatement) {
+            return "logActionSuccess";
+        } else {
+            return "logActionFailed";
         }
     }
 
@@ -176,6 +215,42 @@
         $query = "SELECT * FROM comments WHERE comment_id = ?";
         $statement = $pdo -> prepare($query);
         $executeQuery = $statement -> execute([$comment_id]);
+
+        if($executeQuery) {
+            return $statement -> fetch();
+        } else {
+            return "failed";
+        }
+    }
+
+    function getRecentPostId($pdo) {
+        $query = "SELECT post_id FROM posts ORDER BY time_posted DESC LIMIT 1";
+        $statement = $pdo -> prepare($query);
+        $executeQuery = $statement -> execute();
+
+        if($executeQuery) {
+            return $statement -> fetch();
+        } else {
+            return "failed";
+        }
+    }
+
+    function getRecentCommentId($pdo) {
+        $query = "SELECT comment_id FROM comments ORDER BY time_commented DESC LIMIT 1";
+        $statement = $pdo -> prepare($query);
+        $executeQuery = $statement -> execute();
+
+        if($executeQuery) {
+            return $statement -> fetch();
+        } else {
+            return "failed";
+        }
+    }
+
+    function getRecentUserId($pdo) {
+        $query = "SELECT user_id FROM users ORDER BY date_registered DESC LIMIT 1";
+        $statement = $pdo -> prepare($query);
+        $executeQuery = $statement -> execute();
 
         if($executeQuery) {
             return $statement -> fetch();

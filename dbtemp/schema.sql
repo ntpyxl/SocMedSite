@@ -30,8 +30,9 @@ CREATE TABLE logs (
     log_id INT AUTO_INCREMENT PRIMARY KEY,
     action_id INT NOT NULL,
     done_by INT NOT NULL,
-    content_affected VARCHAR(512) NOT NULL,
-    add_remarks VARCHAR(512),
+    content_affected INT NOT NULL,
+    content_form_id INT NOT NULL,
+    content_owner_id INT NOT NULL,
     time_logged TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
@@ -40,7 +41,17 @@ CREATE TABLE actions (
     action_name VARCHAR(128)
 );
 
+CREATE TABLE content_form (
+    content_form_id INT PRIMARY KEY,
+    content_form_name VARCHAR(128)
+);
+
 insert into actions (action_id, action_name) values
 (1, "CREATED"),
 (2, "UPDATED"),
 (3, "DELETED");
+
+insert into content_form (content_form_id, content_form_name) values
+(1, "ACCOUNT"),
+(2, "POST"),
+(3, "COMMENT");

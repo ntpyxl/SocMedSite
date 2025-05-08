@@ -204,8 +204,35 @@ if(!isset($_SESSION['user_id'])) {
                 </div>
             </div>
 
-            <div class="grid col-span-12 lg:col-span-4 p-3 border-2 border-black">
+            <div class="grid col-span-12 lg:col-span-5 p-3 border-2 border-black">
                 <h2 class="text-center text-2xl font-semibold">RECENT ACTIVITIES</h2>
+                <table class="border-2 border-black">
+                    <tr>
+                        <th class="border border-black">Action</th>
+                        <th class="border border-black">Done By</th>
+                        <th class="border border-black">Content ID</th>
+                        <th class="border border-black">Content Type</th>
+                        <th class="border border-black">Content Owner</th>
+                        <th class="border border-black">Date/Time</th>
+                    </tr>
+                    <?php 
+                    $logsData = getAllLogsByRecency($pdo);
+                    foreach($logsData as $log) {
+                        $doneByUserInfo = getUserInfoDataById($pdo, $log['done_by']);
+                        $ownerUserInfo = getUserInfoDataById($pdo, $log['content_owner_id']); 
+                    ?>
+                        <tr>
+                            <td class="border border-black px-2"><?php echo $log['action_name'] ?></td>
+                            <td class="border border-black px-2"><?php echo $doneByUserInfo['firstname'] . " " . $doneByUserInfo['lastname'] ?></td>
+                            <td class="border border-black px-2"><?php echo $log['content_affected'] ?></td>
+                            <td class="border border-black px-2"><?php echo $log['content_form_name'] ?></td>
+                            <td class="border border-black px-2"><?php echo $ownerUserInfo['firstname'] . " " . $ownerUserInfo['lastname'] ?></td>
+                            <td class="border border-black px-2"><?php echo $log['time_logged'] ?></td>
+                        </tr>
+                    <?php 
+                    }
+                    ?>
+                </table>
             </div>
         </div>
 
